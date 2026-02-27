@@ -84,3 +84,9 @@ playwright-report/
 *.pid
 *.seed
 *.tgz
+
+# =========================
+# Documentation files to exclude
+# =========================
+BLOG_DE_NOTAS.md
+EXPLICACION-DETALLADA.md
