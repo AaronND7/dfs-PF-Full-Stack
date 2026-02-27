@@ -113,7 +113,7 @@ const props = defineProps({
 })
 
 // Logging para ver qué datos llegan
-console.log('📥 Props recibidos en Calendar:', {
+console.log('Props recibidos en Calendar:', {
   maestros: props.maestros?.length || 0,
   alumnos: props.alumnos?.length || 0,
   clases: props.clases?.length || 0,
@@ -121,9 +121,9 @@ console.log('📥 Props recibidos en Calendar:', {
 });
 
 // Logging detallado de los datos
-console.log('👥 Maestros:', props.maestros);
-console.log('🎓 Alumnos:', props.alumnos);
-console.log('📚 Clases:', props.clases);
+console.log('Maestros:', props.maestros);
+console.log('Alumnos:', props.alumnos);
+console.log('Clases:', props.clases);
 
 const emit = defineEmits(["agregar-clase","eliminar-clase", "crear-recurso"])
 
@@ -147,15 +147,15 @@ const nuevoNombreClase = ref("")
 
 // Watchers para ver si los valores cambian
 watch(selectedMaestro, (newVal) => {
-  console.log('🎓 Maestro seleccionado cambió:', newVal);
+  console.log('Maestro seleccionado cambió:', newVal);
 });
 
 watch(selectedAlumno, (newVal) => {
-  console.log('👤 Alumno seleccionado cambió:', newVal);
+  console.log('Alumno seleccionado cambió:', newVal);
 });
 
 watch(selectedClase, (newVal) => {
-  console.log('📚 Clase seleccionada cambió:', newVal);
+  console.log('Clase seleccionada cambió:', newVal);
 });
 
 // Horarios de sábado: 10:00 → 13:45
@@ -289,10 +289,10 @@ async function procesarYConfirmar() {
       closeOptions();
     } catch (error) {
       console.error("Error al agregar clase:", error);
-      message.value = "⚠️ Error al guardar la clase en el horario.";
+      message.value = "Error al guardar la clase en el horario.";
     }
   } else {
-    message.value = "⚠️ Error al crear los nuevos registros.";
+    message.value = "Error al crear los nuevos registros.";
   }
 }
 
@@ -313,8 +313,8 @@ function removeClass() {
 }
 
 async function confirmarClase() {
-  console.log('🔘 Botón confirmar presionado');
-  console.log('📊 Valores seleccionados:', {
+  console.log('Botón confirmar presionado');
+  console.log('Valores seleccionados:', {
     maestro: selectedMaestro.value,
     alumno: selectedAlumno.value,
     clase: selectedClase.value,
@@ -322,12 +322,12 @@ async function confirmarClase() {
   });
   
   if (!selectedMaestro.value || !selectedAlumno.value || !selectedClase.value) {
-    console.log('❌ Campos incompletos');
-    message.value = "⚠️ Debes seleccionar todos los campos.";
+    console.log('Campos incompletos');
+    message.value = "Debes seleccionar todos los campos.";
     return;
   }
   
-  console.log('✅ Todos los campos completos, procesando...');
+  console.log('Todos los campos completos, procesando...');
 
   // Extraemos día y hora del slot seleccionado
   const [dia, hora] = selectedSlot.value.split("-");
@@ -350,13 +350,13 @@ async function confirmarClase() {
     closeOptions();
   } catch (error) {
     console.error("Error al guardar horario:", error);
-    message.value = "⚠️ Error al guardar el horario";
+    message.value = "Error al guardar el horario";
   }
 }
 
 async function agregarClase(nuevaClase) {
   try {
-    console.log('📤 Enviando clase al servidor:', nuevaClase);
+    console.log('Enviando clase al servidor:', nuevaClase);
     
     const res = await fetch("http://localhost:3000/horarios", {
       method: "POST",
@@ -364,7 +364,7 @@ async function agregarClase(nuevaClase) {
       body: JSON.stringify(nuevaClase)
     });
     
-    console.log('📥 Respuesta del servidor:', res.status, res.statusText);
+    console.log('Respuesta del servidor:', res.status, res.statusText);
 
     const data = await res.json();
 
@@ -376,7 +376,7 @@ async function agregarClase(nuevaClase) {
 
     // Si todo salió bien, actualizamos la lista local
     horarios.value.push(data);
-    alert("✅ Clase guardada en la base de datos");
+    alert("Clase guardada en la base de datos");
   } catch (error) {
     console.error("Error de red:", error);
     alert("No se pudo conectar con el servidor.");

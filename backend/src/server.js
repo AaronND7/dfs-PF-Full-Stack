@@ -32,7 +32,7 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 
-      status: 'API running 🎵',
+      status: 'API running',
       dns: 'Google DNS configurado',
       mongodb: 'Conexión lista'
     }));
@@ -40,7 +40,7 @@ const server = http.createServer(async (req, res) => {
   }
   
   if (req.url === '/auth/google') {
-    console.log('🔍 Redirigiendo a Google OAuth');
+    console.log('Redirigiendo a Google OAuth');
     
     const clientId = '871289662038-cj1pv4simbermos67issqrbovd31kpes.apps.googleusercontent.com';
     const redirectUri = 'http://localhost:3000/auth/google/callback';
@@ -52,15 +52,15 @@ const server = http.createServer(async (req, res) => {
       `scope=profile email&` +
       `access_type=offline`;
     
-    console.log('🔗 Redirigiendo a Google OAuth');
+    console.log('Redirigiendo a Google OAuth');
     res.writeHead(302, { 'Location': authUrl });
     res.end();
     return;
   }
   
   if (req.url.startsWith('/auth/google/callback')) {
-    console.log('🔍 Callback de Google recibido');
-    console.log('📍 URL completa:', req.url);
+    console.log('Callback de Google recibido');
+    console.log('URL completa:', req.url);
     
     // Extraer query params
     const urlParts = req.url.split('?');
@@ -71,7 +71,7 @@ const server = http.createServer(async (req, res) => {
     const error = params.get('error');
     
     if (error) {
-      console.error('❌ Error en callback de Google:', error);
+      console.error('Error en callback de Google:', error);
       const errorData = { error: 'Error de autenticación: ' + error };
       const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(errorData))}`;
       res.writeHead(302, { 'Location': redirectUrl });
@@ -80,7 +80,7 @@ const server = http.createServer(async (req, res) => {
     }
     
     if (!code) {
-      console.error('❌ No se recibió código de autorización');
+      console.error('No se recibió código de autorización');
       const errorData = { error: 'No se recibió código de autorización' };
       const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(errorData))}`;
       res.writeHead(302, { 'Location': redirectUrl });
@@ -88,7 +88,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     
-    console.log('✅ Código recibido:', code);
+    console.log('Código recibido:', code);
     
     // Simular procesamiento del código (en producción intercambiarías por token)
     const userData = {
@@ -103,7 +103,7 @@ const server = http.createServer(async (req, res) => {
     };
     
     const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(userData))}`;
-    console.log('🔗 Redirigiendo al frontend con datos de usuario');
+    console.log('Redirigiendo al frontend con datos de usuario');
     res.writeHead(302, { 'Location': redirectUrl });
     res.end();
     return;
@@ -113,11 +113,11 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/profesores' && req.method === 'GET') {
     try {
       const profesores = await Profesor.find({});
-      console.log('📊 Enviando profesores:', profesores.length);
+      console.log('Enviando profesores:', profesores.length);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(profesores));
     } catch (error) {
-      console.error('❌ Error consultando profesores:', error);
+      console.error('Error consultando profesores:', error);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Error consultando profesores' }));
     }
@@ -127,11 +127,11 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/alumnos' && req.method === 'GET') {
     try {
       const alumnos = await Alumno.find({});
-      console.log('📊 Enviando alumnos:', alumnos.length);
+      console.log('Enviando alumnos:', alumnos.length);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(alumnos));
     } catch (error) {
-      console.error('❌ Error consultando alumnos:', error);
+      console.error('Error consultando alumnos:', error);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Error consultando alumnos' }));
     }
@@ -141,11 +141,11 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/clases' && req.method === 'GET') {
     try {
       const clases = await Clase.find({});
-      console.log('📊 Enviando clases:', clases.length);
+      console.log('Enviando clases:', clases.length);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(clases));
     } catch (error) {
-      console.error('❌ Error consultando clases:', error);
+      console.error('Error consultando clases:', error);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Error consultando clases' }));
     }
@@ -158,11 +158,11 @@ const server = http.createServer(async (req, res) => {
         .populate('profesor_id', 'nombre especialidad')
         .populate('alumno_id', 'nombre edad')
         .populate('clase_id', 'nombre descripcion');
-      console.log('📊 Enviando horarios:', horarios.length);
+      console.log('Enviando horarios:', horarios.length);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(horarios));
     } catch (error) {
-      console.error('❌ Error consultando horarios:', error);
+      console.error('Error consultando horarios:', error);
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Error consultando horarios' }));
     }
@@ -178,7 +178,7 @@ const server = http.createServer(async (req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
-        console.log('📝 Creando nuevo registro en', req.url, ':', data);
+        console.log('Creando nuevo registro en', req.url, ':', data);
         
         // Simular guardado con ID
         const newRecord = {
@@ -187,11 +187,11 @@ const server = http.createServer(async (req, res) => {
           createdAt: new Date().toISOString()
         };
         
-        console.log('✅ Registro creado exitosamente:', newRecord);
+        console.log('Registro creado exitosamente:', newRecord);
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(newRecord));
       } catch (error) {
-        console.error('❌ Error al procesar POST:', error);
+        console.error('Error al procesar POST:', error);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Error al procesar los datos' }));
       }
@@ -202,7 +202,7 @@ const server = http.createServer(async (req, res) => {
   // Rutas de la API - DELETE
   if (req.url.startsWith('/horarios/') && req.method === 'DELETE') {
     const id = req.url.split('/').pop();
-    console.log('🗑️ Eliminando horario:', id);
+    console.log('Eliminando horario:', id);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Horario eliminado exitosamente', id: id }));
     return;
@@ -210,7 +210,7 @@ const server = http.createServer(async (req, res) => {
   
   if (req.url.startsWith('/weather/current/') && req.method === 'GET') {
     const city = req.url.split('/').pop();
-    console.log('🌤️ Consultando clima para:', city);
+    console.log('Consultando clima para:', city);
     
     // Datos dinámicos por ciudad
     const weatherData = {
@@ -242,22 +242,22 @@ const server = http.createServer(async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`🚀 API running on http://localhost:${PORT}`);
-  console.log('🌐 DNS configured: Google DNS (8.8.8.8, 8.8.4.4)');
-  console.log('✅ MongoDB Atlas connection ready');
-  console.log('✅ Google OAuth configurado');
-  console.log('🔗 Estable y sin reinicios automáticos');
+  console.log(`API running on http://localhost:${PORT}`);
+  console.log('DNS configured: Google DNS (8.8.8.8, 8.8.4.4)');
+  console.log('MongoDB Atlas connection ready');
+  console.log('Google OAuth configurado');
+  console.log('Estable y sin reinicios automáticos');
 });
 
 // Prevenir reinicios
 server.on('error', (err) => {
-  console.error('❌ Error del servidor:', err);
+  console.error('Error del servidor:', err);
   if (err.code === 'EADDRINUSE') {
-    console.log('💡 Puerto ocupado. El servidor ya está corriendo.');
+    console.log('Puerto ocupado. El servidor ya está corriendo.');
   }
 });
 
 process.on('SIGINT', () => {
-  console.log('\n🛑 Servidor detenido manualmente');
+  console.log('\nServidor detenido manualmente');
   process.exit(0);
 });

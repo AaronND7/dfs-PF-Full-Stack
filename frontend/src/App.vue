@@ -19,16 +19,16 @@ onMounted(async () => {
   
   // Cargar datos solo si hay usuario autenticado
   if (currentUser.value) {
-    console.log('👤 Usuario autenticado:', currentUser.value.displayName)
+    console.log('Usuario autenticado:', currentUser.value.displayName)
     await loadData()
   } else {
-    console.log('🔓 No hay usuario autenticado - mostrando login')
+    console.log('No hay usuario autenticado - mostrando login')
   }
 })
 
 async function loadData() {
   try {
-    console.log('🔄 Cargando datos desde el servidor...')
+    console.log('Cargando datos desde el servidor...')
     
     const [resHorarios, resClases, resAlumnos, resProfesores] = await Promise.all([
       fetch("http://localhost:3000/horarios"),
@@ -46,13 +46,13 @@ async function loadData() {
     alumnos.value = await resAlumnos.json()
     profesores.value = await resProfesores.json()
     
-    console.log('✅ Datos cargados exitosamente')
-    console.log('📊 Horarios:', horarios.value.length)
-    console.log('📊 Clases:', clases.value.length)
-    console.log('📊 Alumnos:', alumnos.value.length)
-    console.log('📊 Profesores:', profesores.value.length)
+    console.log('Datos cargados exitosamente')
+    console.log('Horarios:', horarios.value.length)
+    console.log('Clases:', clases.value.length)
+    console.log('Alumnos:', alumnos.value.length)
+    console.log('Profesores:', profesores.value.length)
   } catch (error) {
-    console.error('❌ Error cargando datos:', error)
+    console.error('Error cargando datos:', error)
     alert('No se pudo conectar con el servidor. Por favor, verifica que el backend esté corriendo.')
   }
 }
