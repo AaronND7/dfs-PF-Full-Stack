@@ -48,12 +48,16 @@ Diseño de base de datos relacional llamada `escuela_alumnos` que incluye:
 
 ## 🧩 1. Requisitos Previos
 
-Para garantizar la estabilidad, este proyecto utiliza **Nix**.
-
+### **Opción A: Con Nix (Recomendado para desarrollo)**
 * **Nix** con flakes habilitados.
 * **Git**.
 
-*Nota: Nix provee Node.js y Postgres automáticamente. Si no usas Nix, deberás instalarlos manualmente en tu sistema.*
+### **Opción B: Sin Nix (Compatible con Windows, macOS, Linux)**
+* **Node.js 18+** - [nodejs.org](https://nodejs.org)
+* **PostgreSQL 16+** - [postgresql.org](https://postgresql.org/download/)
+* **Git**
+
+*Nota: Nix provee Node.js y Postgres automáticamente. Si no usas Nix, deberás instalarlos manualmente.*
 
 ---
 
@@ -64,73 +68,125 @@ Para garantizar la estabilidad, este proyecto utiliza **Nix**.
 ```bash
 git clone https://github.com/zekar47/dfs-proyecto
 cd dfs-proyecto
-
 ```
 
-### Entrar al entorno de desarrollo
-
-Esto configurará automáticamente Node, Postgres y pnpm.
+### **Opción A: Con Nix**
 
 ```bash
-nix develop --extra-experimenta-features nix-command --extra-experimental-features flakes
+nix develop --extra-experimental-features nix-command --extra-experimental-features flakes
+```
 
+### **Opción B: Sin Nix (Windows, macOS, Linux)**
+
+#### **Windows (PowerShell):**
+```powershell
+# Configurar base de datos
+.\scripts\setup-db.ps1
+
+# Iniciar desarrollo
+.\scripts\start-dev.ps1
+```
+
+#### **macOS/Linux (Terminal):**
+```bash
+# Hacer scripts ejecutables (solo Linux/macOS)
+chmod +x scripts/*.sh
+
+# Configurar base de datos
+./scripts/setup-db.sh
+
+# Iniciar desarrollo
+./scripts/start-dev.sh
+```
+
+#### **Manual (todas las plataformas):**
+```bash
+# Backend
+cd backend
+npm install
+npm run dev
+
+# Frontend (en otra terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
 
 ## 🗄️ 3. Configuración de Base de Datos
 
-El proyecto incluye scripts automatizados para facilitar la configuración inicial.
+### **Con Scripts Automatizados (Recomendado)**
 
-1. **Iniciar la DB local:**
-```bash
-db-start
+Los scripts crean automáticamente:
+- Usuario `app_user` con contraseña `devpass`
+- Base de datos `escuela_musica`
+- Esquema y datos iniciales
 
+#### **Windows:**
+```powershell
+.\scripts\setup-db.ps1
 ```
 
-
-*(Crea el usuario `app_user`, la DB `escuela_musica` y arranca el servidor Postgres).*
-2. **Cargar tablas y semillas (Seed):**
+#### **macOS/Linux:**
 ```bash
-db-seed
-
+./scripts/setup-db.sh
 ```
 
+### **Manual (si scripts fallan)**
 
-*(Ejecuta el SQL con la estructura de tablas y datos de prueba).*
+1. **Crear usuario y base de datos manualmente:**
+```sql
+-- Conectarse a PostgreSQL como postgres
+CREATE USER app_user WITH PASSWORD 'devpass' CREATEDB;
+CREATE DATABASE escuela_musica OWNER app_user;
+```
+
+2. **Cargar esquema:**
+```bash
+psql -h localhost -U app_user -d escuela_musica -f backend/db/setup.sql
+```
 
 ---
 
-## 🔌 4. Puesta en marcha del Servidor (Backend)
+## 🔌 4. Acceso a la Aplicación
 
-1. Navega a la carpeta y levanta el servicio:
+### **URLs de Acceso:**
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000
+- **Base de Datos:** localhost:5432
 
+### **Verificación:**
 ```bash
-cd backend
-pnpm install
-pnpm dev
-
+# Verificar API
+curl http://localhost:3000
+# Debería mostrar: {"status":"API running 🎵"}
 ```
-
-2. **Verificación:** Deberías ver `🚀 API running on http://localhost:3000`.
-Puedes probarlo con: `curl http://localhost:3000`
 
 ---
 
-## 💻 5. Puesta en marcha del Cliente (Frontend)
+## �️ 5. Compatibilidad Multiplataforma
 
-En una **nueva terminal**:
+### **Windows:**
+- ✅ PowerShell scripts (`.ps1`)
+- ✅ npm/node.js nativo
+- ✅ PostgreSQL para Windows
 
-1. Instala y corre el servidor de desarrollo:
+### **macOS:**
+- ✅ Bash scripts (`.sh`)
+- ✅ Homebrew soporte
+- ✅ PostgreSQL nativo
 
-```bash
-cd frontend
-pnpm install
-pnpm dev
+### **Linux:**
+- ✅ Bash scripts (`.sh`)
+- ✅ npm/node.js nativo
+- ✅ PostgreSQL (apt/yum)
 
-```
-
-2. Abre tu navegador en: `http://localhost:5173`
+### **Características Universales:**
+- 🌐 Mismas funcionalidades en todas las plataformas
+- 📦 Mismas dependencias npm
+- 🗄️ Misma estructura de base de datos
+- 🔄 Scripts automatizados según plataforma
 
 ---
 

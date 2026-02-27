@@ -1,6 +1,6 @@
 // backend/src/routes/alumnos.js
 const express = require("express");
-const pool = require("../db");
+const Alumno = require("../models/Alumno");
 const router = express.Router();
 
 function validateAlumno(body) {
@@ -12,17 +12,17 @@ function validateAlumno(body) {
 // GET /
 router.get("/", async (_, res, next) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM alumnos ORDER BY id");
-    res.json(rows);
+    const alumnos = await Alumno.find();
+    res.json(alumnos);
   } catch (err) { next(err); }
 });
 
 // GET /:id
 router.get("/:id", async (req, res, next) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM alumnos WHERE id=$1", [req.params.id]);
-    if (!rows.length) return res.status(404).json({ error: "Alumno no encontrado" });
-    res.json(rows[0]);
+    const alumno = await Alumno.findById(req.params.id);
+    if (!alumno) return res.status(404).json({ error: "Alumno no encontrado" });
+    res.json(alumno);
   } catch (err) { next(err); }
 });
 
@@ -31,10 +31,11 @@ router.post("/", async (req, res, next) => {
   try {
     const errMsg = validateAlumno(req.body);
     if (errMsg) return res.status(400).json({ error: errMsg });
+
     const { nombre, edad } = req.body;
-    const q = "INSERT INTO alumnos (nombre, edad) VALUES ($1,$2) RETURNING *";
-    const { rows } = await pool.query(q, [nombre, edad]);
-    res.status(201).json(rows[0]);
+    const nuevoAlumno = new Alumno({ nombre, edad });
+    await nuevoAlumno.save();
+    res.status(201).json(nuevoAlumno);
   } catch (err) { next(err); }
 });
 
@@ -43,41 +44,25 @@ router.put("/:id", async (req, res, next) => {
   try {
     const errMsg = validateAlumno(req.body);
     if (errMsg) return res.status(400).json({ error: errMsg });
-    const { nombre, edad } = req.body;
-    const q = "UPDATE alumnos SET nombre=$1, edad=$2 WHERE id=$3 RETURNING *";
-    const { rows } = await pool.query(q, [nombre, edad, req.params.id]);
-    if (!rows.length) return res.status(404).json({ error: "Alumno no encontrado" });
-    res.json(rows[0]);
-  } catch (err) { next(err); }
-});
 
-// PATCH /:id
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const fields = [];
-    const vals = [];
-    let idx = 1;
-    for (const key of ["nombre", "edad"]) {
-      if (req.body[key] !== undefined) {
-        fields.push(`${key}=$${idx++}`);
-        vals.push(req.body[key]);
-      }
-    }
-    if (!fields.length) return res.status(400).json({ error: "Nada que actualizar" });
-    vals.push(req.params.id);
-    const q = `UPDATE alumnos SET ${fields.join(", ")} WHERE id=$${idx} RETURNING *`;
-    const { rows } = await pool.query(q, vals);
-    if (!rows.length) return res.status(404).json({ error: "Alumno no encontrado" });
-    res.json(rows[0]);
+    const { nombre, edad } = req.body;
+    const alumnoActualizado = await Alumno.findByIdAndUpdate(
+      req.params.id,
+      { nombre, edad },
+      { new: true }
+    );
+    
+    if (!alumnoActualizado) return res.status(404).json({ error: "Alumno no encontrado" });
+    res.json(alumnoActualizado);
   } catch (err) { next(err); }
 });
 
 // DELETE /:id
 router.delete("/:id", async (req, res, next) => {
   try {
-    const { rows } = await pool.query("DELETE FROM alumnos WHERE id=$1 RETURNING id", [req.params.id]);
-    if (!rows.length) return res.status(404).json({ error: "Alumno no encontrado" });
-    res.status(204).send();
+    const alumnoEliminado = await Alumno.findByIdAndDelete(req.params.id);
+    if (!alumnoEliminado) return res.status(404).json({ error: "Alumno no encontrado" });
+    res.json(alumnoEliminado);
   } catch (err) { next(err); }
 });
 

@@ -92,7 +92,7 @@
           </div>
           <br>
 
-          <button @click="procesarYConfirmar">Confirmar Todo</button>
+          <button @click="confirmarClase">Confirmar Todo</button>
         </div>
         <button @click="closeOptions">Cerrar</button>
       </div>
@@ -111,6 +111,19 @@ const props = defineProps({
   clases: Array,
   onCrearRecurso: Function
 })
+
+// Logging para ver qué datos llegan
+console.log('📥 Props recibidos en Calendar:', {
+  maestros: props.maestros?.length || 0,
+  alumnos: props.alumnos?.length || 0,
+  clases: props.clases?.length || 0,
+  horarios: props.horarios?.length || 0
+});
+
+// Logging detallado de los datos
+console.log('👥 Maestros:', props.maestros);
+console.log('🎓 Alumnos:', props.alumnos);
+console.log('📚 Clases:', props.clases);
 
 const emit = defineEmits(["agregar-clase","eliminar-clase", "crear-recurso"])
 
@@ -131,6 +144,19 @@ const nuevoNombreMaestro = ref("")
 const nuevaEspecialidad = ref("")
 const nuevoNombreAlumno = ref("")
 const nuevoNombreClase = ref("")
+
+// Watchers para ver si los valores cambian
+watch(selectedMaestro, (newVal) => {
+  console.log('🎓 Maestro seleccionado cambió:', newVal);
+});
+
+watch(selectedAlumno, (newVal) => {
+  console.log('👤 Alumno seleccionado cambió:', newVal);
+});
+
+watch(selectedClase, (newVal) => {
+  console.log('📚 Clase seleccionada cambió:', newVal);
+});
 
 // Horarios de sábado: 10:00 → 13:45
 const saturdaySlots = computed(() => {
@@ -208,8 +234,11 @@ async function procesarYConfirmar() {
   message.value = "Procesando...";
 
   let maestroId = selectedMaestro.value;
+  console.log('Maestro seleccionado:', selectedMaestro.value);
   let alumnoId = selectedAlumno.value;
+  console.log('Alumno seleccionado:', selectedAlumno.value);
   let claseId = selectedClase.value;
+  console.log('Clase seleccionada:', selectedClase.value);
 
   // 1. Si es un maestro nuevo, lo creamos primero
   if (maestroId === 'nuevo') {
@@ -244,18 +273,24 @@ async function procesarYConfirmar() {
     const [h, m] = hora.split(':').map(Number);
     const fin = new Date(0, 0, 0, h, m + 45).toTimeString().slice(0, 5);
 
-    emit("agregar-clase", {
-      dia_semana: dia,
-      hora_inicio: hora,
-      hora_fin: fin,
-      profesor_id: maestroId,
-      alumno_id: alumnoId,
-      clase_id: claseId
-    });
+    try {
+      // Esperar a que se agregue la clase
+      await agregarClase({
+        dia_semana: dia,
+        hora_inicio: hora,
+        hora_fin: fin,
+        profesor_id: maestroId,
+        alumno_id: alumnoId,
+        clase_id: claseId
+      });
 
-    // Limpiar campos y cerrar
-    resetCamposNuevos();
-    closeOptions();
+      // Limpiar campos y cerrar solo si todo salió bien
+      resetCamposNuevos();
+      closeOptions();
+    } catch (error) {
+      console.error("Error al agregar clase:", error);
+      message.value = "⚠️ Error al guardar la clase en el horario.";
+    }
   } else {
     message.value = "⚠️ Error al crear los nuevos registros.";
   }
@@ -277,11 +312,22 @@ function removeClass() {
   }
 }
 
-function confirmarClase() {
+async function confirmarClase() {
+  console.log('🔘 Botón confirmar presionado');
+  console.log('📊 Valores seleccionados:', {
+    maestro: selectedMaestro.value,
+    alumno: selectedAlumno.value,
+    clase: selectedClase.value,
+    slot: selectedSlot.value
+  });
+  
   if (!selectedMaestro.value || !selectedAlumno.value || !selectedClase.value) {
+    console.log('❌ Campos incompletos');
     message.value = "⚠️ Debes seleccionar todos los campos.";
     return;
   }
+  
+  console.log('✅ Todos los campos completos, procesando...');
 
   // Extraemos día y hora del slot seleccionado
   const [dia, hora] = selectedSlot.value.split("-");
@@ -299,17 +345,26 @@ function confirmarClase() {
     clase_id: selectedClase.value
   };
 
-  emit("agregar-clase", objetoParaAPI);
-  closeOptions();
+  try {
+    await agregarClase(objetoParaAPI);
+    closeOptions();
+  } catch (error) {
+    console.error("Error al guardar horario:", error);
+    message.value = "⚠️ Error al guardar el horario";
+  }
 }
 
 async function agregarClase(nuevaClase) {
   try {
+    console.log('📤 Enviando clase al servidor:', nuevaClase);
+    
     const res = await fetch("http://localhost:3000/horarios", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(nuevaClase)
     });
+    
+    console.log('📥 Respuesta del servidor:', res.status, res.statusText);
 
     const data = await res.json();
 
