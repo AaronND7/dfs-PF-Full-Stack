@@ -1,5 +1,26 @@
-// Backend con API del clima corregida - Sin dependencia de base de datos
+// Backend con API del clima real - Sin dependencia de base de datos
+require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const http = require('http');
+const https = require('https');
+
+// Cargar variables de entorno desde env.txt si no están definidas
+if (!process.env.OPENWEATHER_API_KEY) {
+  try {
+    const envPath = path.join(__dirname, '..', 'env.txt');
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const match = line.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        process.env[match[1].trim()] = match[2].trim();
+      }
+    });
+    console.log('Variables de entorno cargadas desde env.txt');
+  } catch (error) {
+    console.error('Error cargando env.txt:', error);
+  }
+}
 
 // Servidor HTTP con API del clima actualizada
 const server = http.createServer(async (req, res) => {
@@ -91,33 +112,74 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   
-  // Ruta del clima dinámico
+  // Ruta del clima con API real de OpenWeatherMap
   if (req.url.startsWith('/weather/current/') && req.method === 'GET') {
     const city = req.url.split('/').pop();
-    console.log('Consultando clima para:', city);
+    console.log('Consultando clima real para:', city);
     
-    // Datos dinámicos por ciudad
-    const weatherData = {
-      'Monterrey': { temp: 28, condition: 'Soleado', humidity: 45, wind: 12, icon: '01d' },
-      'Guadalajara': { temp: 22, condition: 'Nublado', humidity: 60, wind: 8, icon: '03d' },
-      'México': { temp: 20, condition: 'Lluvia ligera', humidity: 70, wind: 15, icon: '10d' },
-      'default': { temp: 25, condition: 'Despejado', humidity: 50, wind: 10, icon: '01d' }
-    };
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    const baseUrl = process.env.OPENWEATHER_BASE_URL || 'https://api.openweathermap.org/data/2.5';
     
-    const data = weatherData[city] || weatherData['default'];
+    if (!apiKey) {
+      console.error('No se encontró OPENWEATHER_API_KEY en las variables de entorno');
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'API key de OpenWeatherMap no configurada' }));
+      return;
+    }
     
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      city: city,
-      country: "MX",
-      temperature: data.temp,
-      condition: data.condition,
-      description: data.condition,
-      icon: data.icon,
-      humidity: data.humidity,
-      windSpeed: data.wind,
-      timestamp: new Date().toISOString()
-    }));
+    const weatherUrl = `${baseUrl}/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=es`;
+    
+    https.get(weatherUrl, (weatherRes) => {
+      let data = '';
+      
+      weatherRes.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      weatherRes.on('end', () => {
+        try {
+          const weatherData = JSON.parse(data);
+          
+          if (weatherRes.statusCode !== 200) {
+            console.error('Error de OpenWeatherMap:', weatherData);
+            res.writeHead(weatherRes.statusCode, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+              error: weatherData.message || 'Error obteniendo clima de OpenWeatherMap' 
+            }));
+            return;
+          }
+          
+          // Formatear respuesta para compatibilidad con frontend
+          const formattedResponse = {
+            city: weatherData.name,
+            country: weatherData.sys.country,
+            temperature: Math.round(weatherData.main.temp),
+            condition: weatherData.weather[0].description,
+            description: weatherData.weather[0].description,
+            icon: weatherData.weather[0].icon,
+            humidity: weatherData.main.humidity,
+            windSpeed: weatherData.wind.speed,
+            timestamp: new Date().toISOString()
+          };
+          
+          console.log(`Clima real obtenido para ${city}: ${formattedResponse.temperature}°C, ${formattedResponse.condition}`);
+          
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(formattedResponse));
+          
+        } catch (error) {
+          console.error('Error procesando respuesta de OpenWeatherMap:', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Error procesando datos del clima' }));
+        }
+      });
+      
+    }).on('error', (error) => {
+      console.error('Error conectando a OpenWeatherMap:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Error de conexión con OpenWeatherMap' }));
+    });
+    
     return;
   }
   
