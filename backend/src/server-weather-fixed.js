@@ -13,7 +13,7 @@ const server = http.createServer(async (req, res) => {
   if (req.url === '/') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 
-      status: 'API running 🎵',
+      status: 'API running',
       weather: 'API del clima actualizada',
       google: 'API de Google OAuth disponible'
     }));
@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
   
   // API de Google OAuth
   if (req.url === '/auth/google') {
-    console.log('🔍 Redirigiendo a Google OAuth');
+    console.log('Redirigiendo a Google OAuth');
     
     const clientId = '871289662038-cj1pv4simbermos67issqrbovd31kpes.apps.googleusercontent.com';
     const redirectUri = 'http://localhost:3000/auth/google/callback';
@@ -34,15 +34,15 @@ const server = http.createServer(async (req, res) => {
       `scope=profile email&` +
       `access_type=offline`;
     
-    console.log('🔗 Redirigiendo a Google OAuth');
+    console.log('Redirigiendo a Google OAuth');
     res.writeHead(302, { 'Location': authUrl });
     res.end();
     return;
   }
   
   if (req.url.startsWith('/auth/google/callback')) {
-    console.log('🔍 Callback de Google recibido');
-    console.log('📍 URL completa:', req.url);
+    console.log('Callback de Google recibido');
+    console.log('URL completa:', req.url);
     
     // Extraer query params
     const urlParts = req.url.split('?');
@@ -53,7 +53,7 @@ const server = http.createServer(async (req, res) => {
     const error = params.get('error');
     
     if (error) {
-      console.error('❌ Error en callback de Google:', error);
+      console.error('Error en callback de Google:', error);
       const errorData = { error: 'Error de autenticación: ' + error };
       const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(errorData))}`;
       res.writeHead(302, { 'Location': redirectUrl });
@@ -62,7 +62,7 @@ const server = http.createServer(async (req, res) => {
     }
     
     if (!code) {
-      console.error('❌ No se recibió código de autorización');
+      console.error('No se recibió código de autorización');
       const errorData = { error: 'No se recibió código de autorización' };
       const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(errorData))}`;
       res.writeHead(302, { 'Location': redirectUrl });
@@ -70,7 +70,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     
-    console.log('✅ Código recibido:', code);
+    console.log('Código recibido:', code);
     
     // Simular procesamiento del código (en producción intercambiarías por token)
     const userData = {
@@ -85,7 +85,7 @@ const server = http.createServer(async (req, res) => {
     };
     
     const redirectUrl = `http://localhost:5173?auth=${encodeURIComponent(JSON.stringify(userData))}`;
-    console.log('🔗 Redirigiendo al frontend con datos de usuario');
+    console.log('Redirigiendo al frontend con datos de usuario');
     res.writeHead(302, { 'Location': redirectUrl });
     res.end();
     return;
@@ -94,7 +94,7 @@ const server = http.createServer(async (req, res) => {
   // Ruta del clima dinámico
   if (req.url.startsWith('/weather/current/') && req.method === 'GET') {
     const city = req.url.split('/').pop();
-    console.log('🌤️ Consultando clima para:', city);
+    console.log('Consultando clima para:', city);
     
     // Datos dinámicos por ciudad
     const weatherData = {
@@ -173,12 +173,12 @@ const server = http.createServer(async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`🚀 API running on http://localhost:${PORT}`);
-  console.log('✅ API del clima actualizada y funcionando');
-  console.log('🌤️ Datos dinámicos por ciudad disponibles');
+  console.log(`API running on http://localhost:${PORT}`);
+  console.log('API del clima actualizada y funcionando');
+  console.log('Datos dinámicos por ciudad disponibles');
 });
 
 process.on('SIGINT', () => {
-  console.log('\n🛑 Servidor detenido manualmente');
+  console.log('\nServidor detenido manualmente');
   process.exit(0);
 });

@@ -1,10 +1,10 @@
-# 🎵 Sistema de Gestión - Escuela de Música AARDEM
+# Sistema de Gestión - Escuela de Música AARDEM
 
 Bienvenido al repositorio oficial del proyecto **AARDEM**, una solución integral para la gestión de horarios, alumnos y clases, construida con tecnologías modernas de desarrollo web.
 
 ---
 
-## 🚀 Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 ### **Frontend**
 
@@ -20,23 +20,23 @@ Bienvenido al repositorio oficial del proyecto **AARDEM**, una solución integra
 
 ---
 
-## 🛠️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
-### 🎨 Frontend (Interfaz de Usuario)
+### Frontend (Interfaz de Usuario)
 
 Se implementó una estructura de componentes modulares donde destaca `Calendar.vue`. Este componente gestiona la lógica de la agenda semanal.
 
 * **Funcionalidad:** Visualización de horarios (08:00 a 21:00), asignación de clases mediante interacción directa y paneles laterales para gestión de catálogo.
 * **Estado:** Reactividad optimizada con la sintaxis `<script setup>`.
 
-### ⚙️ Backend (Servidor API)
+### Backend (Servidor API)
 
 El corazón del sistema corre sobre **Express**, gestionando las rutas y la lógica de negocio.
 
 * **Endpoints:** Rutas preparadas para el manejo de usuarios, profesores, alumnos y horarios.
 * **Seguridad:** Implementación de middlewares para validación y control de acceso.
 
-### 📊 Base de Datos (PostgreSQL)
+### Base de Datos (PostgreSQL)
 
 Diseño de base de datos relacional llamada `escuela_alumnos` que incluye:
 
@@ -46,7 +46,7 @@ Diseño de base de datos relacional llamada `escuela_alumnos` que incluye:
 
 ---
 
-## 🧩 1. Requisitos Previos
+## 1. Requisitos Previos
 
 ### **Opción A: Con Nix (Recomendado para desarrollo)**
 * **Nix** con flakes habilitados.
@@ -61,7 +61,7 @@ Diseño de base de datos relacional llamada `escuela_alumnos` que incluye:
 
 ---
 
-## 📥 2. Instalación y Configuración
+## 2. Instalación y Configuración
 
 ### Clonar el repositorio
 
@@ -114,7 +114,7 @@ npm run dev
 
 ---
 
-## 🗄️ 3. Configuración de Base de Datos
+## 3. Configuración de Base de Datos
 
 ### **Con Scripts Automatizados (Recomendado)**
 
@@ -149,7 +149,7 @@ psql -h localhost -U app_user -d escuela_musica -f backend/db/setup.sql
 
 ---
 
-## 🔌 4. Acceso a la Aplicación
+## 4. Acceso a la Aplicación
 
 ### **URLs de Acceso:**
 - **Frontend:** http://localhost:5173
@@ -160,37 +160,37 @@ psql -h localhost -U app_user -d escuela_musica -f backend/db/setup.sql
 ```bash
 # Verificar API
 curl http://localhost:3000
-# Debería mostrar: {"status":"API running 🎵"}
+# Debería mostrar: {"status":"API running"}
 ```
 
 ---
 
-## �️ 5. Compatibilidad Multiplataforma
+## 5. Compatibilidad Multiplataforma
 
 ### **Windows:**
-- ✅ PowerShell scripts (`.ps1`)
-- ✅ npm/node.js nativo
-- ✅ PostgreSQL para Windows
+- PowerShell scripts (`.ps1`)
+- npm/node.js nativo
+- PostgreSQL para Windows
 
 ### **macOS:**
-- ✅ Bash scripts (`.sh`)
-- ✅ Homebrew soporte
-- ✅ PostgreSQL nativo
+- Bash scripts (`.sh`)
+- Homebrew soporte
+- PostgreSQL nativo
 
 ### **Linux:**
-- ✅ Bash scripts (`.sh`)
-- ✅ npm/node.js nativo
-- ✅ PostgreSQL (apt/yum)
+- Bash scripts (`.sh`)
+- npm/node.js nativo
+- PostgreSQL (apt/yum)
 
 ### **Características Universales:**
-- 🌐 Mismas funcionalidades en todas las plataformas
-- 📦 Mismas dependencias npm
-- 🗄️ Misma estructura de base de datos
-- 🔄 Scripts automatizados según plataforma
+- Mismas funcionalidades en todas las plataformas
+- Mismas dependencias npm
+- Misma estructura de base de datos
+- Scripts automatizados según plataforma
 
 ---
 
-## 📸 Galería del Proyecto
+## Galería del Proyecto
 
 Aquí se muestran las capturas de pantalla de los diferentes módulos del sistema:
 
@@ -211,7 +211,7 @@ http://localhost:3000
 
 --
 
-# 🔧 Convenciones globales
+# Convenciones globales
 
 ## Headers requeridos
 
@@ -247,7 +247,7 @@ Content-Type: application/json
 
 ---
 
-# 👤 USUARIOS
+# USUARIOS
 
 Tabla: `usuarios`
 
@@ -333,7 +333,7 @@ Elimina usuario.
 
 ---
 
-# 👨‍🏫 PROFESORES
+# PROFESORES
 
 Tabla: `profesores`
 
@@ -347,7 +347,7 @@ CRUD estándar.
 
 ---
 
-# 🎓 ALUMNOS
+# ALUMNOS
 
 | Campo  | Tipo         |
 | ------ | ------------ |
@@ -359,7 +359,7 @@ Validación edad > 0.
 
 ---
 
-# 🎼 CLASES
+# CLASES
 
 | Campo       | Tipo         |
 | ----------- | ------------ |
@@ -369,7 +369,7 @@ Validación edad > 0.
 
 ---
 
-# 🗓 HORARIOS
+# HORARIOS
 
 Entidad crítica.
 
@@ -444,7 +444,7 @@ Elimina horario.
 
 ---
 
-# 🔗 Relaciones
+# Relaciones
 
 ```
 horarios → clases
