@@ -1,0 +1,86 @@
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+.vscode/
+.idea/
+
+# =========================
+# Env files (secrets!)
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Node / JS (global)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# =========================
+# Frontend (Vue / Vite)
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.nuxt/
+frontend/.output/
+frontend/.cache/
+frontend/coverage/
+
+# =========================
+# Backend (Node API)
+# =========================
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/.tsbuildinfo
+backend/coverage/
+
+# Logs
+logs/
+*.log
+logfile
+
+# =========================
+# Database (local Postgres)
+# =========================
+.pgdata/
+.pgsocket/
+*.sql.gz
+*.dump
+
+# =========================
+# Nix
+# =========================
+.direnv/
+.envrc
+result
+result-*
+.nix-profile
+.nix-*
+
+# =========================
+# Testing
+# =========================
+coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+
+# =========================
+# Misc
+# =========================
+*.pid
+*.seed
+*.tgz

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+scripts/db-stop || true
+rm -rf .pgdata logfile
+scripts/db-start
+scripts/db-seed
+
+echo "♻️ Database fully reset"

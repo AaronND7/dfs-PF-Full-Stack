@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+psql -h "${PGHOST:-$PWD/.pgsocket}" -U app_user -d escuela_musica -f backend/db/setup.sql

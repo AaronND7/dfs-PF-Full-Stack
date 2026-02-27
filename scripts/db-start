@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -e
+
+# Configuración de rutas
+export PGDATA="$PWD/.pgdata"
+export PGHOST="$PWD/.pgsocket"
+export PGUSER=postgres
+
+mkdir -p "$PGHOST"
+
+# 1. Inicialización limpia si no existe
+if [ ! -d "$PGDATA/base" ]; then
+    echo "📦 Initializing cluster with user 'postgres'..."
+    initdb -D "$PGDATA" -U postgres -A trust
+fi
+
+# 2. Encendido del motor
+if pg_ctl -D "$PGDATA" status >/dev/null 2>&1; then
+    echo "🟢 Postgres already running"
+else
+    echo "🚀 Starting Postgres..."
+    pg_ctl -D "$PGDATA" -l "$PWD/logfile" -o "-k $PGHOST" start
+
+    # ESPERA ACTIVA: No avanzar hasta que el socket responda
+    echo "⏳ Waiting for Postgres to be ready..."
+    until pg_isready -h "$PGHOST" -U postgres; do
+        sleep 1
+    done
+fi
+
+# 3. Creación de Roles y DB
+echo "👤 Configuring roles..."
+psql -h "$PGHOST" -U postgres -d postgres <<EOF
+DO \$\$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='app_user') THEN
+    CREATE ROLE app_user WITH LOGIN PASSWORD 'devpass' CREATEDB;
+  END IF;
+END
+\$\$;
+EOF
+
+echo "🗄 Checking database..."
+if ! psql -h "$PGHOST" -U postgres -lqt | cut -d \| -f 1 | grep -qw escuela_musica; then
+    createdb -h "$PGHOST" -U postgres -O app_user escuela_musica
+    echo "✨ Database 'escuela_musica' created successfully."
+else
+    echo "📚 Database 'escuela_musica' already exists."
+fi
+
+echo "✅ System ready"
