@@ -61,13 +61,41 @@ Diseño de base de datos relacional llamada `escuela_alumnos` que incluye:
 
 ---
 
+## Inicio Rápido (Recomendado)
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/AaronND7/dfs-PF-Full-Stack.git
+cd dfs-PF-Full-Stack
+```
+
+### 2. Iniciar Backend
+```bash
+cd backend
+npm install
+node src/server-weather-fixed.js
+```
+
+### 3. Iniciar Frontend (en otra terminal)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 4. Acceder a la aplicación
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3000
+
+---
+
 ## 2. Instalación y Configuración
 
 ### Clonar el repositorio
 
 ```bash
-git clone https://github.com/zekar47/dfs-proyecto
-cd dfs-proyecto
+git clone https://github.com/AaronND7/dfs-PF-Full-Stack.git
+cd dfs-PF-Full-Stack
 ```
 
 ### **Opción A: Con Nix**
@@ -104,7 +132,7 @@ chmod +x scripts/*.sh
 # Backend
 cd backend
 npm install
-npm run dev
+node src/server-weather-fixed.js
 
 # Frontend (en otra terminal)
 cd frontend
